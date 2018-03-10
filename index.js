@@ -8,7 +8,6 @@ MongoClient.connect(uri, function(err, db) {
   //db.close(); // remove this and it works
 });
 
-
 const express = require('express')
 const graphqlHTTP = require('express-graphql')
 const app = express()
@@ -20,17 +19,24 @@ app.use('/graphql', graphqlHTTP({
   graphiql: true
 }))
 
-//app.get('/', (req, res) => res.send("Hello from UniNinja !"))
-
-// respond with "hello world" when a GET request is made to the homepage
+// Respond with a simple 'coming soon' message for GET requests to the root page.
 app.get('/', function (req, res) {
-  if (req.query.username == "loic") {
-    res.send('iOS > Android');
-  } else if (req.query.username == "dan") {
-    res.send('Android > iOS');
-  } else {
-    res.send("The UniNinja API is coming soon!");
-  }
+  res.send("The UniNinja API is coming soon!");
+});
+
+// For GET requests to the `/unis` page, an array (JSON) of all unis will be returned.
+app.get('/unis', function (req, res) {
+    const sussexUni = {
+        name: "University of Sussex",
+        id: "1"
+    }
+
+    const brightonUni = {
+        name: "University of Brighton",
+        id: "2"
+    }
+
+    res.send({ unis: [sussexUni, brightonUni] });
 });
 
 // run server on port 3000
