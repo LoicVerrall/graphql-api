@@ -1,42 +1,56 @@
+import {schema} from './Schema'
+
 require('dotenv').config()
+const util = require('util');
 
 
+// DATABASE SETUP
+var uri = process.env.MONGODB_URI;
+var database = null;
 var MongoClient = require('mongodb').MongoClient;
-var uri = "mongodb://kay:UniNinja@mycluster0-shard-00-00.mongodb.net:27017,mycluster0-shard-00-01.mongodb.net:27017,mycluster0-shard-00-02.mongodb.net:27017/admin?ssl=true&replicaSet=Mycluster0-shard-0&authSource=admin";
-MongoClient.connect(uri, function(err, db) {
-  console.log('Connection to DB has been made!');
-  //db.close(); // remove this and it works
+
+MongoClient.connect(uri, function(err, connection) {
+  if(connection) {
+    database = connection.db(process.env.MONGODB_DATABASE);
+   }
 });
 
+// GRAPHQL SETUP
 const express = require('express')
 const graphqlHTTP = require('express-graphql')
 const app = express()
 
-const schema = require('./graphql/schema/Schema')
+
 
 app.use('/graphql', graphqlHTTP({
   schema,
   graphiql: true
 }))
 
-// Respond with a simple 'coming soon' message for GET requests to the root page.
+
+// CURRENT LISTENER
 app.get('/', function (req, res) {
-  res.send("The UniNinja API is coming soon!");
-});
 
-// For GET requests to the `/unis` page, an array (JSON) of all unis will be returned.
-app.get('/unis', function (req, res) {
-    const sussexUni = {
-        name: "University of Sussex",
-        id: "1"
+  // BASIC USERNAME LISTENER
+  if (req.query.username == "loic") {
+    res.send('iOS > Android');
+  } else if (req.query.username == "dan") {
+    res.send('Android > iOS');
+  } else {
+
+    // DATABASE QUERY
+    if(database) {
+      database.collection("uni").find().toArray(function(err, dbRes) {
+        if(err) console.log("Error");
+        console.log(dbRes);
+        res.send(dbRes);
+      });
+
+    // ELSE ERROR CONNECTING
+    } else {
+      res.send('Error connecting to database!');
     }
-
-    const brightonUni = {
-        name: "University of Brighton",
-        id: "2"
-    }
-
-    res.send({ unis: [sussexUni, brightonUni] });
+  }
 });
 
 // run server on port 3000
