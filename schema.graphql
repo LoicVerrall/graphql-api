@@ -1,0 +1,52 @@
+scalar LatLon
+
+type Query {
+  universities: [UniveristyList]
+  courseList(pubukprn: String!): [Course]
+  course(pubukprn: String!, kiscourseid: String!): Course
+  university(pubukprn: String!): University
+}
+
+type University {
+  pubukprn: String!
+  name: String!
+  url: String!
+  unionURL: String!
+  color: String
+  courses: [Course]!
+  lat: String!
+  lon: String!
+  averageRent: Float
+  uniLocationType: LocationType
+  uniType: UniversityType
+  nearestTrainStation: String
+}
+
+type UniveristyList{
+  pubukprn: String!
+  name: String!
+}
+
+type Course {
+  title: String!
+  kiscourseid: String!
+  isFullTime: String!
+  courseURL: String
+  years: Int
+  placementYearAvaliable: Boolean
+  yearAbroadAvaliable: Boolean
+  degreeLabel: String
+  isHons: Boolean
+  rating: Int
+}
+
+enum LocationType{
+  CITY
+  SEASIDE_CITY
+  TOWN
+}
+
+enum UniversityType{
+  CAMPUS
+  CITY
+}
