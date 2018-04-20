@@ -1,0 +1,5 @@
+echo "Building Docker Image..."
+docker build -t unininja-api .
+
+echo "Running Docker Image"
+docker run -p 3000:3000 --env-file .env unininja-api
